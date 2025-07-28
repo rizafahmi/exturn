@@ -14,6 +14,7 @@ defmodule Exturn.Application do
        repos: Application.fetch_env!(:exturn, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:exturn, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Exturn.PubSub},
+      ExturnWeb.Presence,
       # Start a worker by calling: Exturn.Worker.start_link(arg)
       # {Exturn.Worker, arg},
       # Start to serve requests, typically the last entry

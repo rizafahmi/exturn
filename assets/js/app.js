@@ -20,7 +20,7 @@
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
+import {Socket, Presence} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
@@ -29,6 +29,27 @@ const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken}
 })
+
+const socket = new Socket("/socket", {authToken: window.userToken})
+const channel = socket.channel("room:lobby", {name: window.location.search.split("=")[1]})
+const presence = new Presence(channel)
+
+function renderOnlineUsers(presence) {
+  let response = ""
+
+  presence.list((id, {metas: [first, ...rest]}) => {
+    const count = rest.length + 1
+    response += `<br>${id} (${count})</br>`
+
+  } )
+
+  document.querySelector("main").innerHTML = response
+}
+
+socket.connect()
+presence.onSync(() => renderOnlineUsers(presence))
+
+channel.join()
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
@@ -78,4 +99,3 @@ if (process.env.NODE_ENV === "development") {
     window.liveReloader = reloader
   })
 }
-
