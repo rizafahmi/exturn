@@ -17,8 +17,8 @@ defmodule ExturnWeb.Router do
   scope "/", ExturnWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
-    # live "/", TurnLive
+    # get "/", PageController, :home
+    live "/online/:name", TurnLive, :index
   end
 
   # Other scopes may use custom stacks.
