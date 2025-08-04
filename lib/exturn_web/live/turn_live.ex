@@ -3,278 +3,88 @@ defmodule ExturnWeb.TurnLive do
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-gradient-to-br from-base-200 to-base-300">
-      <!-- Beautiful Header -->
-      <div class="bg-base-100 shadow-lg border-b border-base-300">
-        <div class="container mx-auto px-6 py-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-              <div class="avatar placeholder">
-                <div class="bg-primary text-primary-content rounded-full w-12">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a3 3 0 01-3-3v-1m7-4V5a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
-                    />
-                  </svg>
-                </div>
-              </div>
-              <div>
-                <h1 class="text-2xl font-bold text-base-content">Exturn</h1>
-                <p class="text-sm text-base-content/70">One Voice, One Moment</p>
-              </div>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="badge badge-soft badge-success">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-3 w-3 mr-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                Online
-              </div>
-              <div class="text-sm text-base-content/60">Welcome, <strong>{@name}</strong></div>
-            </div>
+    <div class="min-h-screen bg-base-100 text-base-content">
+      <!-- Neo-Brutalist Header -->
+      <header class="w-full border-b-2 border-black bg-white mb-8">
+        <div class="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between px-4 py-6 gap-2">
+          <div class="flex items-center gap-3">
+            <span class="font-black text-2xl tracking-tight uppercase">Exturn</span>
+            <span class="badge badge-outline text-xs font-mono tracking-widest">
+              ONE VOICE, ONE MOMENT
+            </span>
           </div>
+          <span class="text-xs font-mono text-black/60">Welcome, <b>{@name}</b></span>
         </div>
-      </div>
-      
-    <!-- Main Content -->
-      <div class="container mx-auto p-6 space-y-6">
+      </header>
+
+      <main class="max-w-2xl mx-auto flex flex-col gap-8 px-4">
         <!-- Turn Management Card -->
-        <div class="card card-border bg-base-100 shadow-2xl hover:shadow-3xl transition-all duration-300">
-          <div class="card-body">
-            <div class="flex items-center justify-between mb-6">
-              <h2 class="card-title text-xl">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 text-primary"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                  />
-                </svg>
-                Speaking Controls
-              </h2>
-              <div class="stats stats-horizontal shadow-md">
-                <div class="stat py-2 px-4">
-                  <div class="stat-value text-sm text-primary">{@participant_count}</div>
-                  <div class="stat-title text-xs">Online</div>
-                </div>
-                <div class="stat py-2 px-4">
-                  <div class="stat-value text-sm text-warning">{length(@waiting_queue)}</div>
-                  <div class="stat-title text-xs">In Queue</div>
-                </div>
-              </div>
+        <section class="card card-border bg-white border-2 border-black shadow-none">
+          <div class="card-body gap-4">
+            <h2 class="card-title text-lg font-bold uppercase tracking-wider mb-2">Turn Control</h2>
+            <div class="flex flex-wrap gap-3">
+              <button
+                class={"btn btn-neutral btn-dash font-bold uppercase px-6 " <> get_button_class(@user_status, @current_speaker, @name)}
+                phx-click="toggle_talking"
+                phx-value-name={@name}
+                disabled={get_button_disabled(@user_status, @current_speaker, @name)}
+              >
+                {get_button_text(@user_status, @current_speaker, @name)}
+              </button>
+              <button
+                :if={@current_speaker != nil}
+                class="btn btn-neutral btn-outline font-bold uppercase px-6"
+                phx-click="request_for_turn"
+                disabled={@user_status in [:talking, :waiting] or @current_speaker == @name}
+              >
+                {get_request_button_text(@user_status)}
+              </button>
             </div>
 
-            <div class="space-y-4">
-              <div class="flex flex-wrap gap-4">
-                <button
-                  class={"btn btn-lg #{get_button_class(@user_status, @current_speaker, @name)} #{get_loading_class(@user_status, @current_speaker, @name)} transition-all duration-200 hover:scale-105"}
-                  phx-click="toggle_talking"
-                  phx-value-name={@name}
-                  disabled={get_button_disabled(@user_status, @current_speaker, @name)}
-                >
-                  <span
-                    :if={get_show_loading(@user_status, @current_speaker, @name)}
-                    class="loading loading-spinner loading-sm"
-                  >
-                  </span>
-                  <svg
-                    :if={!get_show_loading(@user_status, @current_speaker, @name)}
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d={get_button_icon(@user_status, @current_speaker, @name)}
-                    />
-                  </svg>
-                  {get_button_text(@user_status, @current_speaker, @name)}
-                </button>
+            <div
+              :if={@current_speaker}
+              class="alert alert-outline alert-info border-2 border-black mt-4"
+            >
+              <span class="font-bold uppercase">Now Speaking:</span>
+              <span class="font-mono text-lg"><b>{@current_speaker}</b></span>
+            </div>
 
-                <button
-                  :if={@current_speaker != nil}
-                  class="btn btn-lg btn-soft btn-warning transition-all duration-200 hover:scale-105"
-                  phx-click="request_for_turn"
-                  disabled={@user_status in [:talking, :waiting] or @current_speaker == @name}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  {get_request_button_text(@user_status)}
-                </button>
-              </div>
-              
-    <!-- Current Speaker Alert -->
-              <div :if={@current_speaker} class="alert alert-soft alert-info shadow-lg animate-pulse">
-                <div class="flex items-center">
-                  <div class="avatar placeholder mr-3">
-                    <div class="bg-info text-info-content rounded-full w-10 animate-bounce">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 class="font-bold">Now Speaking</h3>
-                    <div class="text-sm opacity-90">
-                      <strong>{@current_speaker}</strong> has the floor
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-    <!-- Queue Alert -->
-              <div :if={length(@waiting_queue) > 0} class="alert alert-soft alert-warning shadow-lg">
-                <div class="flex items-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6 shrink-0 mr-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <div class="flex-1">
-                    <h3 class="font-bold">Speaking Queue</h3>
-                    <div class="text-sm opacity-90">
-                      <span class="badge badge-warning badge-sm mr-2">{length(@waiting_queue)}</span>
-                      {Enum.join(@waiting_queue, " → ")}
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div
+              :if={length(@waiting_queue) > 0}
+              class="alert alert-outline alert-warning border-2 border-black mt-2"
+            >
+              <span class="font-bold uppercase">Queue</span>
+              <span class="font-mono text-xs">{Enum.join(@waiting_queue, " → ")}</span>
             </div>
           </div>
-        </div>
+        </section>
         
     <!-- Participants Card -->
-        <div class="card card-border bg-base-100 shadow-2xl hover:shadow-3xl transition-all duration-300">
-          <div class="card-body">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="card-title">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 text-primary"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-                Participants ({@participant_count})
-              </h3>
-            </div>
-
-            <div class="grid gap-3">
-              <div
+        <section class="card card-dash bg-white border-2 border-black shadow-none">
+          <div class="card-body gap-4">
+            <h3 class="card-title text-lg font-bold uppercase tracking-wider mb-2">
+              Participants <span class="badge badge-outline font-mono">{@participant_count}</span>
+            </h3>
+            <ul id="online_users" phx-update="stream" class="flex flex-col gap-2">
+              <li
                 :for={{dom_id, %{id: id, metas: _metas}} <- @streams.presences}
                 id={dom_id}
-                class="flex items-center justify-between p-4 bg-gradient-to-r from-base-200 to-base-100 rounded-xl hover:shadow-lg transition-all duration-200 hover:scale-[1.02] border border-base-300"
+                class="flex items-center justify-between border-b border-black last:border-b-0 py-2 px-1"
               >
-                <div class="flex items-center space-x-4">
-                  <div class={"avatar placeholder #{get_user_indicator_class(id, @current_speaker, @waiting_queue)}"}>
-                    <div class="bg-gradient-to-br from-primary to-secondary text-primary-content rounded-full w-12 h-12 shadow-lg">
-                      <span class="text-lg font-bold">{String.first(id) |> String.upcase()}</span>
-                    </div>
-                  </div>
-                  <div>
-                    <span class="font-semibold text-lg text-base-content">{id}</span>
-                    <div class="text-sm text-base-content/60">
-                      {get_user_description(id, @current_speaker, @waiting_queue)}
-                    </div>
-                  </div>
+                <div class="flex items-center gap-3">
+                  <span class="inline-block w-8 h-8 border-2 border-black bg-base-200 text-center font-mono font-bold text-lg leading-8">
+                    {String.first(id) |> String.upcase()}
+                  </span>
+                  <span class="font-mono text-base">{id}</span>
                 </div>
-                <div class="flex items-center space-x-2">
-                  <div class={"badge badge-lg #{get_status_badge_class(id, @current_speaker, @waiting_queue)} shadow-md"}>
-                    {get_user_status_text(id, @current_speaker, @waiting_queue)}
-                  </div>
-                  <div :if={id == @current_speaker} class="indicator">
-                    <span class="indicator-item badge badge-success badge-xs animate-pulse"></span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-6 w-6 text-success"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
+                <span class={"badge badge-outline font-mono text-xs " <> get_status_badge_class(id, @current_speaker, @waiting_queue)}>
+                  {get_user_status_text(id, @current_speaker, @waiting_queue)}
+                </span>
+              </li>
+            </ul>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
     """
   end
@@ -523,7 +333,7 @@ defmodule ExturnWeb.TurnLive do
     case user_status do
       :waiting -> "In Queue"
       :talking -> "Speaking"
-      _ -> "Request Turn"
+      _ -> "Request to Speak"
     end
   end
 

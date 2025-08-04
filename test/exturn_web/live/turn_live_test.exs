@@ -10,8 +10,8 @@ defmodule ExturnWeb.TurnLiveTest do
       # Should show Start Talking button initially
       assert html =~ "Start Talking"
 
-      # Should NOT show Request Turn button when no one is speaking
-      refute html =~ "Request Turn"
+      # Should NOT show Request to Speak button when no one is speaking
+      refute html =~ "Request to Speak"
 
       # Should show user in participants list as Idle
       assert html =~ "alice"
@@ -30,8 +30,9 @@ defmodule ExturnWeb.TurnLiveTest do
       # Button should change to Stop Talking
       assert html =~ "Stop Talking"
 
-      # Should show current speaker alert with strong tags
-      assert html =~ "<strong>alice</strong> has the floor"
+      # Should show current speaker alert with new markup
+      assert html =~ "Now Speaking:"
+      assert html =~ ">alice<"
 
       # Participant should show as Speaking
       assert html =~ "Speaking"
@@ -56,11 +57,11 @@ defmodule ExturnWeb.TurnLiveTest do
       assert html =~ "Idle"
     end
 
-    test "request turn button is hidden when no one is speaking", %{conn: conn} do
+    test "request to speak button is hidden when no one is speaking", %{conn: conn} do
       {:ok, _view, html} = live(conn, "/online/alice")
 
-      # Should not show Request Turn button initially
-      refute html =~ "Request Turn"
+      # Should not show Request to Speak button initially
+      refute html =~ "Request to Speak"
 
       # Only Start Talking should be visible
       assert html =~ "Start Talking"
@@ -128,17 +129,19 @@ defmodule ExturnWeb.TurnLiveTest do
     test "avatar indicators show correctly for speaker", %{conn: conn} do
       {:ok, view, _html} = live(conn, "/online/alice")
 
-      # Initially no ring
-      initial_html = render(view)
-      refute initial_html =~ "ring ring-success"
+      # Initially no ring (no longer relevant in new design)
+      # initial_html = render(view)
+      # refute initial_html =~ "ring ring-success"
 
-      # When speaking - success ring
+      # When speaking - should show badge-success and Speaking
       speaking_html = view |> element("[phx-click=toggle_talking]") |> render_click()
-      assert speaking_html =~ "ring ring-success ring-offset-base-100 ring-offset-2"
+      assert speaking_html =~ "badge-success"
+      assert speaking_html =~ "Speaking"
 
-      # Back to no ring
+      # Back to idle - should show badge-ghost and Idle
       idle_html = view |> element("[phx-click=toggle_talking]") |> render_click()
-      refute idle_html =~ "ring ring-success"
+      assert idle_html =~ "badge-ghost"
+      assert idle_html =~ "Idle"
     end
   end
 
@@ -155,22 +158,24 @@ defmodule ExturnWeb.TurnLiveTest do
       # Verify speaker state is established
       html = render(view)
       assert html =~ "Stop Talking"
-      assert html =~ "<strong>alice</strong> has the floor"
+      assert html =~ "Now Speaking:"
+      assert html =~ ">alice<"
 
       # Test that the UI properly handles the speaking state
       assert html =~ "Speaking"
       assert html =~ "badge-success"
-      assert html =~ "ring ring-success"
     end
 
-    test "request turn button appears when someone else is conceptually speaking", %{conn: conn} do
+    test "request to speak button appears when someone else is conceptually speaking", %{
+      conn: conn
+    } do
       # This test validates that the UI logic works correctly
       # In a real scenario, this would happen when another user is speaking
 
       {:ok, view, _html} = live(conn, "/online/bob")
 
       # If we manually set alice as speaker (this would happen via PubSub in real usage)
-      # The UI should show Request Turn button
+      # The UI should show Request to Speak button
       # For now, we test the button states we can observe
 
       html = render(view)
@@ -194,7 +199,7 @@ defmodule ExturnWeb.TurnLiveTest do
       # Should have proper initial state
       assert html =~ "Start Talking"
       assert html =~ "Idle"
-      refute html =~ "Request Turn"
+      refute html =~ "Request to Speak"
     end
 
     test "presence tracking works for multiple users (basic)", %{conn: conn} do
@@ -248,7 +253,7 @@ defmodule ExturnWeb.TurnLiveTest do
       for name <- test_names do
         if name != "" do
           {:ok, _view, html} = live(conn, "/online/#{name}")
-          assert html =~ "One Voice, One Moment"
+          assert html =~ "ONE VOICE, ONE MOMENT"
         end
       end
     end
