@@ -278,7 +278,7 @@ defmodule ExturnWeb.TurnLiveTest do
       for name <- test_names do
         if name != "" do
           {:ok, _view, html} = live(conn, "/online/#{name}")
-          assert html =~ "ONE VOICE, ONE MOMENT"
+          assert html =~ "@#{name}"
         end
       end
     end

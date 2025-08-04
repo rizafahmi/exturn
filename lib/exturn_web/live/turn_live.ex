@@ -4,24 +4,14 @@ defmodule ExturnWeb.TurnLive do
   def render(assigns) do
     ~H"""
     <div class="min-h-screen bg-base-100 text-base-content">
-      <!-- Neo-Brutalist Header -->
-      <header class="w-full border-b-2 border-black bg-white mb-8">
-        <div class="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between px-4 py-6 gap-2">
-          <div class="flex items-center gap-3">
-            <span class="font-black text-2xl tracking-tight uppercase">Exturn</span>
-            <span class="badge badge-outline text-xs font-mono tracking-widest">
-              ONE VOICE, ONE MOMENT
-            </span>
-          </div>
-          <span class="text-xs font-mono text-black/60">Welcome, <b>{@name}</b></span>
-        </div>
-      </header>
-
-      <main class="max-w-2xl mx-auto flex flex-col gap-8 px-4">
+      <main class="max-w-2xl mx-auto flex flex-col gap-8 px-4 py-8">
         <!-- Turn Management Card -->
         <section class="card card-border bg-white border-2 border-black shadow-none">
           <div class="card-body gap-4">
-            <h2 class="card-title text-lg font-bold uppercase tracking-wider mb-2">Turn Control</h2>
+            <h2 class="card-title text-lg font-bold uppercase tracking-wider mb-2">
+              Turn Control
+              <span class="badge badge-outline font-mono text-xs normal-case">@{@name}</span>
+            </h2>
             <div class="flex flex-wrap gap-3">
               <button
                 class={"btn btn-neutral btn-dash font-bold uppercase px-6 " <> get_button_class(@user_status, @current_speaker, @name)}
