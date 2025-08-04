@@ -8,7 +8,6 @@
 import Config
 
 config :exturn,
-  ecto_repos: [Exturn.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
 # Configures the endpoint
