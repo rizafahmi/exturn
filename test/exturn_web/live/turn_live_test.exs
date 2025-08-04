@@ -143,6 +143,16 @@ defmodule ExturnWeb.TurnLiveTest do
       assert idle_html =~ "badge-ghost"
       assert idle_html =~ "Idle"
     end
+
+    test "current user sees 'Now Speaking: You' when speaking", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/online/alice")
+      html = view |> element("[phx-click=toggle_talking]") |> render_click()
+      assert html =~ "Now Speaking:"
+      assert html =~ "You"
+      # Check for prominent style (emoji or class)
+      assert html =~ "🎤"
+      assert html =~ "bg-warning"
+    end
   end
 
   describe "Turn Management LiveView - Multi-user Simulation" do
@@ -185,6 +195,21 @@ defmodule ExturnWeb.TurnLiveTest do
       assert html =~ "bob"
       # Bob should be idle initially
       assert html =~ "Idle"
+    end
+
+    test "other user sees 'Now Speaking: [name]' with minimal style", %{conn: conn} do
+      {:ok, alice_view, _} = live(conn, "/online/alice")
+      # Alice starts talking
+      alice_view |> element("[phx-click=toggle_talking]") |> render_click()
+      {:ok, bob_view, _} = live(conn, "/online/bob")
+      # Simulate PubSub state change for Bob: Alice is the current speaker
+      send(bob_view.pid, {:state_change, %{current_speaker: "alice", waiting_queue: []}})
+      bob_html = render(bob_view)
+      assert bob_html =~ "Now Speaking:"
+      assert bob_html =~ ">alice<"
+      # Should NOT show the prominent style for Bob
+      refute bob_html =~ "🎤"
+      assert bob_html =~ "alert-outline"
     end
   end
 

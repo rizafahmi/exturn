@@ -43,10 +43,36 @@ defmodule ExturnWeb.TurnLive do
 
             <div
               :if={@current_speaker}
-              class="alert alert-outline alert-info border-2 border-black mt-4"
+              class={
+                if @current_speaker == @name do
+                  "alert bg-warning border-4 border-error text-error-content mt-4 flex items-center gap-4 animate-pulse shadow-lg"
+                else
+                  "alert alert-outline alert-info border-2 border-black mt-4"
+                end
+              }
+              style={
+                if @current_speaker == @name, do: "font-size: 2rem; font-weight: 900;", else: nil
+              }
             >
-              <span class="font-bold uppercase">Now Speaking:</span>
-              <span class="font-mono text-lg"><b>{@current_speaker}</b></span>
+              <span :if={@current_speaker == @name} class="text-3xl">🎤</span>
+              <span class={
+                if @current_speaker == @name,
+                  do: "font-black uppercase tracking-widest",
+                  else: "font-bold uppercase"
+              }>
+                Now Speaking:
+              </span>
+              <span class={
+                if @current_speaker == @name,
+                  do: "font-mono text-3xl font-black",
+                  else: "font-mono text-lg"
+              }>
+                <%= if @current_speaker == @name do %>
+                  You
+                <% else %>
+                  {@current_speaker}
+                <% end %>
+              </span>
             </div>
 
             <div
