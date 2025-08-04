@@ -31,7 +31,7 @@ defmodule ExturnWeb.TurnLiveTest do
       assert html =~ "Stop Talking"
 
       # Should show current speaker alert with strong tags
-      assert html =~ "<strong>alice</strong> is currently speaking"
+      assert html =~ "<strong>alice</strong> has the floor"
 
       # Participant should show as Speaking
       assert html =~ "Speaking"
@@ -155,7 +155,7 @@ defmodule ExturnWeb.TurnLiveTest do
       # Verify speaker state is established
       html = render(view)
       assert html =~ "Stop Talking"
-      assert html =~ "<strong>alice</strong> is currently speaking"
+      assert html =~ "<strong>alice</strong> has the floor"
 
       # Test that the UI properly handles the speaking state
       assert html =~ "Speaking"
@@ -248,7 +248,7 @@ defmodule ExturnWeb.TurnLiveTest do
       for name <- test_names do
         if name != "" do
           {:ok, _view, html} = live(conn, "/online/#{name}")
-          assert html =~ "Video Conference - Turn Management"
+          assert html =~ "One Voice, One Moment"
         end
       end
     end
