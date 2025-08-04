@@ -47,4 +47,10 @@ defmodule ExturnWeb.Presence do
   def track_user(name, params), do: track(self(), "online_users", name, params)
 
   def subscribe(), do: Phoenix.PubSub.subscribe(Exturn.PubSub, "proxy:online_users")
+
+  def update_status(name, status) do
+    update(self(), "online_users", name, fn meta ->
+      Map.put(meta, :status, status)
+    end)
+  end
 end
