@@ -4,7 +4,7 @@ defmodule ExturnWeb.NameEntryLiveTest do
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")
     assert html_response(conn, 200) =~ "Enter Your Name"
-    assert html_response(conn, 200) =~ "Turn Management System"
+    assert html_response(conn, 200) =~ "Turn Control"
     assert html_response(conn, 200) =~ "Join Room"
   end
 end

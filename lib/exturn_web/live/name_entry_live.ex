@@ -8,10 +8,9 @@ defmodule ExturnWeb.NameEntryLive do
         <!-- Header Section -->
         <div class="text-center mb-8">
           <h1 class="text-4xl font-black uppercase tracking-wider mb-2">Turn Control</h1>
-
         </div>
-
-        <!-- Name Entry Card -->
+        
+    <!-- Name Entry Card -->
         <section class="card bg-white border-4 border-black shadow-none">
           <div class="card-body gap-6">
             <h2 class="card-title text-xl font-bold uppercase tracking-wider text-center justify-center">
@@ -28,7 +27,7 @@ defmodule ExturnWeb.NameEntryLive do
                   autocomplete="off"
                   phx-debounce="300"
                 />
-                <div class="label" :if={@errors[:name]}>
+                <div :if={@errors[:name]} class="label">
                   <span class="label-text-alt text-error font-bold uppercase">
                     {@errors[:name]}
                   </span>
@@ -43,11 +42,22 @@ defmodule ExturnWeb.NameEntryLive do
                 Join Room
               </button>
             </.form>
-
-            <!-- Info Section -->
+            
+    <!-- Info Section -->
             <div class="alert alert-outline border-2 border-black">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="stroke-current shrink-0 w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                >
+                </path>
               </svg>
               <span class="text-sm font-mono">
                 Enter a name to join the room
@@ -124,5 +134,4 @@ defmodule ExturnWeb.NameEntryLive do
 
     errors
   end
-
 end

@@ -52,7 +52,6 @@ defmodule ExturnWeb.Telemetry do
         unit: {:native, :millisecond}
       ),
 
-
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :kilobyte}),
       summary("vm.total_run_queue_lengths.total"),

@@ -31,6 +31,4 @@ defmodule Exturn.Application do
     ExturnWeb.Endpoint.config_change(changed, removed)
     :ok
   end
-
-
 end
