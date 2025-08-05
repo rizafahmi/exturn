@@ -3,17 +3,17 @@ defmodule ExturnWeb.NameEntryLive do
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-base-100 text-base-content flex items-center justify-center p-4">
+    <div class="min-h-screen bg-base-100 text-base-content flex items-center justify-center p-3 sm:p-4">
       <main class="w-full max-w-md">
         <!-- Header Section -->
-        <div class="text-center mb-8">
-          <h1 class="text-4xl font-black uppercase tracking-wider mb-2">Turn Control</h1>
+        <div class="text-center mb-6 sm:mb-8">
+          <h1 class="text-2xl sm:text-4xl font-black uppercase tracking-wider mb-2">Turn Control</h1>
         </div>
         
     <!-- Name Entry Card -->
         <section class="card bg-white border-4 border-black shadow-none">
-          <div class="card-body gap-6">
-            <h2 class="card-title text-xl font-bold uppercase tracking-wider text-center justify-center">
+          <div class="card-body gap-4 sm:gap-6">
+            <h2 class="card-title text-lg sm:text-xl font-bold uppercase tracking-wider text-center justify-center">
               Enter Your Name
             </h2>
 
@@ -23,12 +23,12 @@ defmodule ExturnWeb.NameEntryLive do
                   field={@form[:name]}
                   type="text"
                   placeholder="Your name"
-                  class="input input-bordered border-2 border-black focus:border-black focus:ring-0 font-mono text-lg"
+                  class="input input-bordered border-2 border-black focus:border-black focus:ring-0 font-mono text-base sm:text-lg min-h-12 sm:min-h-auto px-4 py-3"
                   autocomplete="off"
                   phx-debounce="300"
                 />
                 <div :if={@errors[:name]} class="label">
-                  <span class="label-text-alt text-error font-bold uppercase">
+                  <span class="label-text-alt text-error font-bold uppercase text-sm">
                     {@errors[:name]}
                   </span>
                 </div>
@@ -36,7 +36,7 @@ defmodule ExturnWeb.NameEntryLive do
 
               <button
                 type="submit"
-                class="btn btn-neutral w-full font-bold uppercase tracking-wider text-lg border-2 border-black"
+                class="btn btn-neutral w-full font-bold uppercase tracking-wider text-base sm:text-lg border-2 border-black min-h-12"
                 disabled={@errors != %{}}
               >
                 Join Room
@@ -44,12 +44,12 @@ defmodule ExturnWeb.NameEntryLive do
             </.form>
             
     <!-- Info Section -->
-            <div class="alert alert-outline border-2 border-black">
+            <div class="alert alert-outline border-2 border-black flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                class="stroke-current shrink-0 w-6 h-6"
+                class="stroke-current shrink-0 w-5 h-5 sm:w-6 sm:h-6"
               >
                 <path
                   stroke-linecap="round"
@@ -59,7 +59,7 @@ defmodule ExturnWeb.NameEntryLive do
                 >
                 </path>
               </svg>
-              <span class="text-sm font-mono">
+              <span class="text-xs sm:text-sm font-mono">
                 Enter a name to join the room
               </span>
             </div>

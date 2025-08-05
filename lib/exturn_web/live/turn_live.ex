@@ -4,30 +4,36 @@ defmodule ExturnWeb.TurnLive do
   def render(assigns) do
     ~H"""
     <div class="min-h-screen bg-base-100 text-base-content">
-      <main class="max-w-2xl mx-auto flex flex-col gap-8 px-4 py-8">
+      <main class="max-w-2xl mx-auto flex flex-col gap-4 sm:gap-8 px-3 sm:px-4 py-4 sm:py-8">
         <!-- Turn Management Card -->
         <section class="card card-border bg-white border-2 border-black shadow-none">
-          <div class="card-body gap-4">
-            <h2 class="card-title text-lg font-bold uppercase tracking-wider mb-2">
-              Turn Control
+          <div class="card-body gap-3 sm:gap-4">
+            <h2 class="card-title text-base sm:text-lg font-bold uppercase tracking-wider mb-1 sm:mb-2 flex-col sm:flex-row items-start sm:items-center gap-2">
+              <span>Turn Control</span>
               <span class="badge badge-outline font-mono text-xs normal-case">@{@name}</span>
             </h2>
-            <div class="flex flex-wrap gap-3">
+            <div class="mobile-button-grid sm:flex sm:flex-wrap sm:gap-3">
               <button
-                class={"btn btn-neutral btn-dash font-bold uppercase px-6 " <> get_button_class(@user_status, @current_speaker, @name)}
+                class={"btn btn-neutral btn-dash font-bold uppercase px-4 sm:px-6 text-sm sm:text-base " <> get_button_class(@user_status, @current_speaker, @name)}
                 phx-click="toggle_talking"
                 phx-value-name={@name}
                 disabled={get_button_disabled(@user_status, @current_speaker, @name)}
               >
-                {get_button_text(@user_status, @current_speaker, @name)}
+                <span class="sm:hidden">
+                  {get_button_text_short(@user_status, @current_speaker, @name)}
+                </span>
+                <span class="hidden sm:inline">
+                  {get_button_text(@user_status, @current_speaker, @name)}
+                </span>
               </button>
               <button
                 :if={@current_speaker != nil}
-                class="btn btn-neutral btn-outline font-bold uppercase px-6"
+                class="btn btn-neutral btn-outline font-bold uppercase px-4 sm:px-6 text-sm sm:text-base"
                 phx-click="request_for_turn"
                 disabled={@user_status in [:talking, :waiting] or @current_speaker == @name}
               >
-                {get_request_button_text(@user_status)}
+                <span class="sm:hidden">{get_request_button_text_short(@user_status)}</span>
+                <span class="hidden sm:inline">{get_request_button_text(@user_status)}</span>
               </button>
             </div>
 
@@ -35,70 +41,86 @@ defmodule ExturnWeb.TurnLive do
               :if={@current_speaker}
               class={
                 if @current_speaker == @name do
-                  "alert bg-warning border-4 border-error text-error-content mt-4 flex items-center gap-4 animate-pulse shadow-lg"
+                  "alert bg-warning border-4 border-error text-error-content mt-2 sm:mt-4 flex flex-col sm:flex-row items-center gap-2 sm:gap-4 animate-pulse shadow-lg text-center sm:text-left"
                 else
-                  "alert alert-outline alert-info border-2 border-black mt-4"
+                  "alert alert-outline alert-info border-2 border-black mt-2 sm:mt-4 flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left"
                 end
               }
-              style={
-                if @current_speaker == @name, do: "font-size: 2rem; font-weight: 900;", else: nil
-              }
             >
-              <span :if={@current_speaker == @name} class="text-3xl">🎤</span>
-              <span class={
-                if @current_speaker == @name,
-                  do: "font-black uppercase tracking-widest",
-                  else: "font-bold uppercase"
-              }>
-                Now Speaking:
-              </span>
-              <span class={
-                if @current_speaker == @name,
-                  do: "font-mono text-3xl font-black",
-                  else: "font-mono text-lg"
-              }>
-                <%= if @current_speaker == @name do %>
-                  You
-                <% else %>
-                  {@current_speaker}
-                <% end %>
-              </span>
+              <span :if={@current_speaker == @name} class="text-2xl sm:text-3xl">🎤</span>
+              <div class="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                <span class={
+                  if @current_speaker == @name,
+                    do: "font-black uppercase tracking-wider text-lg sm:text-2xl",
+                    else: "font-bold uppercase text-sm sm:text-base"
+                }>
+                  Now Speaking:
+                </span>
+                <span class={
+                  if @current_speaker == @name,
+                    do: "font-mono text-xl sm:text-3xl font-black",
+                    else: "font-mono text-base sm:text-lg"
+                }>
+                  <%= if @current_speaker == @name do %>
+                    You
+                  <% else %>
+                    {@current_speaker}
+                  <% end %>
+                </span>
+              </div>
             </div>
 
             <div
               :if={length(@waiting_queue) > 0}
-              class="alert alert-outline alert-warning border-2 border-black mt-2"
+              class="alert alert-outline alert-warning border-2 border-black mt-2 flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left"
             >
-              <span class="font-bold uppercase">Queue</span>
-              <span class="font-mono text-xs">{Enum.join(@waiting_queue, " → ")}</span>
+              <span class="font-bold uppercase text-sm">Queue</span>
+              <span class="font-mono text-xs break-all">{Enum.join(@waiting_queue, " → ")}</span>
             </div>
           </div>
         </section>
         
     <!-- Participants Card -->
         <section class="card card-dash bg-white border-2 border-black shadow-none">
-          <div class="card-body gap-4">
-            <h3 class="card-title text-lg font-bold uppercase tracking-wider mb-2">
-              Participants <span class="badge badge-outline font-mono">{@participant_count}</span>
+          <div class="card-body gap-3 sm:gap-4">
+            <h3 class="card-title text-base sm:text-lg font-bold uppercase tracking-wider mb-1 sm:mb-2 flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <span>Participants</span>
+              <span class="badge badge-outline font-mono text-xs">{@participant_count}</span>
             </h3>
-            <ul id="online_users" phx-update="stream" class="flex flex-col gap-2">
+            <ul id="online_users" phx-update="stream" class="flex flex-col gap-1 sm:gap-2">
               <li
                 :for={{dom_id, %{id: id, metas: _metas}} <- @streams.presences}
                 id={dom_id}
-                class="flex items-center justify-between border-b border-black last:border-b-0 py-2 px-1"
+                class="participant-item flex items-center justify-between border-b border-black last:border-b-0 py-3 sm:py-2 px-2 sm:px-1 min-h-16 sm:min-h-0"
               >
-                <div class="flex items-center gap-3">
-                  <span class="inline-block w-8 h-8 border-2 border-black bg-base-200 text-center font-mono font-bold text-lg leading-8">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                  <span class="participant-avatar inline-block w-10 h-10 sm:w-8 sm:h-8 border-2 border-black bg-base-200 text-center font-mono font-bold text-lg sm:text-lg leading-10 sm:leading-8 flex-shrink-0">
                     {String.first(id) |> String.upcase()}
                   </span>
-                  <span class="font-mono text-base">{id}</span>
+                  <span class="font-mono text-sm sm:text-base truncate">{id}</span>
                 </div>
-                <span class={"badge badge-outline font-mono text-xs " <> get_status_badge_class(id, @current_speaker, @waiting_queue)}>
-                  {get_user_status_text(id, @current_speaker, @waiting_queue)}
+                <span class={"badge badge-outline font-mono text-xs px-2 py-1 flex-shrink-0 " <> get_status_badge_class(id, @current_speaker, @waiting_queue)}>
+                  <span class="sm:hidden">
+                    {get_user_status_text_short(id, @current_speaker, @waiting_queue)}
+                  </span>
+                  <span class="hidden sm:inline">
+                    {get_user_status_text(id, @current_speaker, @waiting_queue)}
+                  </span>
                 </span>
               </li>
             </ul>
           </div>
+        </section>
+        
+    <!-- Leave Session Button -->
+        <section class="flex justify-center">
+          <button
+            class="btn btn-outline btn-error font-bold uppercase px-6 sm:px-8 text-sm sm:text-base"
+            phx-click="exit_session"
+          >
+            <span class="sm:hidden">Leave</span>
+            <span class="hidden sm:inline">Leave Session</span>
+          </button>
         </section>
       </main>
     </div>
@@ -184,6 +206,15 @@ defmodule ExturnWeb.TurnLive do
       true ->
         {:noreply, socket}
     end
+  end
+
+  def handle_event("exit_session", _params, socket) do
+    # Clean up user presence before navigating away
+    if connected?(socket) do
+      ExturnWeb.Presence.untrack(self(), "online_users", socket.assigns.name)
+    end
+
+    {:noreply, push_navigate(socket, to: "/")}
   end
 
   def handle_info({ExturnWeb.Presence, {:join, presence}}, socket) do
@@ -332,6 +363,15 @@ defmodule ExturnWeb.TurnLive do
     end
   end
 
+  defp get_button_text_short(user_status, current_speaker, username) do
+    cond do
+      current_speaker == username and user_status == :talking -> "Stop"
+      current_speaker == nil and user_status == :idle -> "Start"
+      current_speaker != nil and current_speaker != username -> "Busy"
+      true -> "Start"
+    end
+  end
+
   defp get_button_class(user_status, current_speaker, username) do
     cond do
       current_speaker == username and user_status == :talking -> "btn-error btn-soft"
@@ -353,6 +393,14 @@ defmodule ExturnWeb.TurnLive do
     end
   end
 
+  defp get_request_button_text_short(user_status) do
+    case user_status do
+      :waiting -> "Queued"
+      :talking -> "Speaking"
+      _ -> "Request"
+    end
+  end
+
   defp get_user_status_text(user_id, current_speaker, waiting_queue) do
     cond do
       user_id == current_speaker ->
@@ -366,84 +414,24 @@ defmodule ExturnWeb.TurnLive do
     end
   end
 
+  defp get_user_status_text_short(user_id, current_speaker, waiting_queue) do
+    cond do
+      user_id == current_speaker ->
+        "📢"
+
+      user_id in waiting_queue ->
+        "##{Enum.find_index(waiting_queue, &(&1 == user_id)) + 1}"
+
+      true ->
+        "💤"
+    end
+  end
+
   defp get_status_badge_class(user_id, current_speaker, waiting_queue) do
     cond do
       user_id == current_speaker -> "badge-success badge-soft"
       user_id in waiting_queue -> "badge-warning badge-soft"
       true -> "badge-ghost"
-    end
-  end
-
-  defp get_user_indicator_class(user_id, current_speaker, waiting_queue) do
-    cond do
-      user_id == current_speaker ->
-        "ring ring-success ring-offset-base-100 ring-offset-2 animate-pulse"
-
-      user_id in waiting_queue ->
-        "ring ring-warning ring-offset-base-100 ring-offset-2"
-
-      true ->
-        ""
-    end
-  end
-
-  # New helper functions for enhanced UI
-  defp get_loading_class(_user_status, _current_speaker, _username) do
-    # Could add loading states based on conditions
-    ""
-  end
-
-  defp get_show_loading(_user_status, _current_speaker, _username) do
-    # For now, we don't show loading spinners
-    # This could be enhanced to show loading during state transitions
-    false
-  end
-
-  defp get_button_icon(user_status, current_speaker, username) do
-    cond do
-      current_speaker == username and user_status == :talking ->
-        "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
-
-      current_speaker == nil and user_status == :idle ->
-        "M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-
-      true ->
-        "M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z M15 9l6 6m0-6l-6 6"
-    end
-  end
-
-  defp get_user_description(user_id, current_speaker, waiting_queue) do
-    cond do
-      user_id == current_speaker ->
-        "Currently speaking"
-
-      user_id in waiting_queue ->
-        position = Enum.find_index(waiting_queue, &(&1 == user_id)) + 1
-        "#{position}#{ordinal_suffix(position)} in speaking queue"
-
-      true ->
-        "Available to speak"
-    end
-  end
-
-  defp ordinal_suffix(n) do
-    case rem(n, 100) do
-      11 ->
-        "th"
-
-      12 ->
-        "th"
-
-      13 ->
-        "th"
-
-      _ ->
-        case rem(n, 10) do
-          1 -> "st"
-          2 -> "nd"
-          3 -> "rd"
-          _ -> "th"
-        end
     end
   end
 end
