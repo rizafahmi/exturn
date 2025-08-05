@@ -65,6 +65,102 @@
 
 /* This file is for your main application CSS */
 
+/* Mobile-First Responsive Design */
+@media (max-width: 640px) {
+  /* Improve button touch targets for mobile */
+  .btn {
+    @apply min-h-12 px-4 py-3 text-base;
+  }
+
+  .btn-sm {
+    @apply min-h-10 px-3 py-2 text-sm;
+  }
+
+  /* Better text sizing for mobile readability */
+  .card-title {
+    @apply text-lg leading-tight;
+  }
+
+  .alert {
+    @apply text-sm px-3 py-2;
+  }
+
+  /* Optimize spacing for mobile */
+  .card-body {
+    @apply p-4 gap-3;
+  }
+
+  /* Make participant list more mobile-friendly */
+  .participant-item {
+    @apply py-3 px-2;
+  }
+
+  .participant-avatar {
+    @apply w-10 h-10 text-lg;
+  }
+
+  /* Better status indicators for mobile */
+  .badge {
+    @apply text-xs px-2 py-1;
+  }
+
+  /* Responsive typography */
+  h1 {
+    @apply text-2xl leading-tight;
+  }
+
+  h2 {
+    @apply text-xl leading-tight;
+  }
+
+  h3 {
+    @apply text-lg leading-tight;
+  }
+
+  /* Mobile-optimized form elements */
+  .input {
+    @apply min-h-12 text-base px-4 py-3;
+  }
+
+  /* Better mobile alerts */
+  .alert-mobile {
+    @apply flex-col items-start gap-2 p-3;
+  }
+
+  /* Responsive grid for buttons */
+  .mobile-button-grid {
+    @apply grid grid-cols-1 gap-3 w-full;
+  }
+
+  .mobile-button-grid .btn {
+    @apply w-full justify-center;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .mobile-button-grid {
+    @apply grid grid-cols-2 gap-3;
+  }
+}
+
+/* Touch-friendly enhancements */
+@media (hover: none) and (pointer: coarse) {
+  /* Enhance touch targets */
+  .btn {
+    @apply min-h-12;
+  }
+
+  .participant-item {
+    @apply min-h-16;
+  }
+
+  /* Remove hover effects on touch devices */
+  .hover-lift:hover {
+    @apply transform-none shadow-none;
+  }
+}
+
 /* Enhanced animations and transitions */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
