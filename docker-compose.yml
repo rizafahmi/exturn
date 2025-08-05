@@ -1,0 +1,24 @@
+version: "3"
+services:
+  app:
+    image: exturn:latest
+    environment:
+      PHX_SERVER: "true"
+      PHX_HOST: "turn.rizafahmi.com"
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+    expose:
+      - "4000"
+  caddy:
+    image: caddy:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+volumes:
+  caddy_data:
+  caddy_config:
